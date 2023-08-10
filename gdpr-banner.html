@@ -1,0 +1,76 @@
+<script>
+function gdprBanner(){
+
+	// keep track of pages (new session) and die
+	if (sessionStorage.pageViews) ++sessionStorage.pageViews;
+	else sessionStorage.pageViews = 1;
+	if(sessionStorage.pageViews != 1) return;
+	
+	console.log("hello world");
+
+	// create banner and set styles
+	const banner = document.createElement('div');
+	banner.style = `
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		width: 100%;
+		background-color: #f2f2f2;
+		color: #131313;
+		padding: 10px;
+		border-top: 1px solid #ccc;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	`;
+
+	// set options for what to track and what not to track
+	const checkbox = [
+		{option:"nectary", display:"Nectary"},
+		{option:"advertising", display:"Advertising"},
+	]
+
+	// Create and Add tracking options
+	for(check of checkbox){
+		let prefix = "GDPR-";
+		let option = document.createElement("input");
+		let label = document.createElement("label");
+
+		option.type = 'checkbox';
+		option.id = prefix+option['option'];
+		option.checked = "checked"
+		
+		label.setAttribute("for", prefix+check['option'])
+		label.textContent = check['display'];
+
+		banner.appendChild(label);
+		banner.appendChild(option);
+	}
+
+
+	// Accept all button, this will allow all tracking
+	const acceptButton = document.createElement('button');
+	acceptButton.textContent = 'Accept All';
+	acceptButton.onclick = function(){
+		console.log("All Accepted");
+	};
+	
+
+	// Confirm choices button, this will save the choices made.
+	const confirmButton = document.createElement('button');
+	confirmButton.textContent = 'Confirm Choice';
+	confirmButton.onclick = function(){
+		console.log("Choices Confirmed");
+	};
+
+
+	// add select option buttons to banner
+	banner.appendChild(acceptButton);
+	banner.appendChild(confirmButton);
+
+	// put it all together
+	document.body.appendChild(banner);
+}
+	
+gdprBanner();
+</script>
