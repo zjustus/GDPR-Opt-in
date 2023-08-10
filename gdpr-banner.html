@@ -7,6 +7,7 @@ function gdprBanner(){
 	if(sessionStorage.pageViews != 1) return;
 	
 	console.log("hello world");
+	const updateConsentState = require('updateConsentState');
 
 	// create banner and set styles
 	const banner = document.createElement('div');
@@ -26,13 +27,13 @@ function gdprBanner(){
 
 	// set options for what to track and what not to track
 	const checkbox = [
-		{option:"nectary", display:"Nectary"},
-		{option:"advertising", display:"Advertising"},
+		{option: "ad_storage", display: "Nectary"},
+		{option: "analytics_storage", display: "Advertising"},
 	]
 
 	// Create and Add tracking options
+	let prefix = "GDPR-";
 	for(check of checkbox){
-		let prefix = "GDPR-";
 		let option = document.createElement("input");
 		let label = document.createElement("label");
 
@@ -53,6 +54,14 @@ function gdprBanner(){
 	acceptButton.textContent = 'Accept All';
 	acceptButton.onclick = function(){
 		console.log("All Accepted");
+
+		// updateConsentState({
+		//   'ad_storage': 'granted',
+		//   'analytics_storage': 'granted',
+		//   'functionality_storage': 'granted',
+		//   'personalization_storage': 'granted',
+		//   'security_storage': 'granted'
+		// });
 	};
 	
 
@@ -61,6 +70,13 @@ function gdprBanner(){
 	confirmButton.textContent = 'Confirm Choice';
 	confirmButton.onclick = function(){
 		console.log("Choices Confirmed");
+
+		googleConsentStates = {};
+		for(choice of ckeckbox){
+			googleConsentStates[choice["option"]] = (document.getElementById(prefix+choice['option'].checked ? 'granted' : 'denied');
+		}
+		updateConsentState(googleConsentStates);
+		
 	};
 
 
