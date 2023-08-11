@@ -1,3 +1,23 @@
+
+<style>
+	#GDPR-banner{
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		width: 100%;
+		background-color: #f2f2f2;
+		color: #131313;
+		padding: 10px;
+		border-top: 1px solid #ccc;
+		z-index: 999;
+	}
+	#GDPR-optionContainer{
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+</style>
 <script>
 function gdprBanner(){
 
@@ -5,12 +25,35 @@ function gdprBanner(){
 	if (sessionStorage.pageViews) ++sessionStorage.pageViews;
 	else sessionStorage.pageViews = 1;
 	if(sessionStorage.pageViews != 1) return;
+
+
+	// Parameters
+
+	// set options for what to track and what not to track see - https://developers.google.com/tag-platform/tag-manager/templates/consent-apis
+	const checkbox = [
+		{ option: "analytics_storage", display: "Analytics", default:'deny' },
+		{ option: "personalization_storage", display: "Personalization", default:'deny' },
+	]
+
+	// Display a message to the users
+	let message = "<h1>Hello! GDPR Banner!</h1><p>Privacy Notice: we are a GDPR compliant company</p>";
+
+
+	// DO NOT MODIFY BELOW THIS LINE
+
+	let prefix = "GDPR-";
 	
-	console.log("hello world");
-	const updateConsentState = require('updateConsentState');
+	// console.log("hello world");
+	// const updateConsentState = require('updateConsentState');
 
 	// create banner and set styles
 	const banner = document.createElement('div');
+	banner.id = prefix+'banner';
+	const textContainer = document.createElement('div');
+	textContainer.innerHTML = message;
+	const optionContainer = document.createElement('div')
+	optionContainer.id = prefix + 'bannerOptions';
+
 	banner.style = `
 		position: fixed;
 		bottom: 0;
@@ -20,32 +63,29 @@ function gdprBanner(){
 		color: #131313;
 		padding: 10px;
 		border-top: 1px solid #ccc;
+		z-index: 999;
+	`;
+	optionContainer.style = `
 		display: flex;
 		justify-content: center;
 		align-items: center;
 	`;
 
-	// set options for what to track and what not to track
-	const checkbox = [
-		{option: "ad_storage", display: "Nectary"},
-		{option: "analytics_storage", display: "Advertising"},
-	]
 
 	// Create and Add tracking options
-	let prefix = "GDPR-";
 	for(check of checkbox){
 		let option = document.createElement("input");
 		let label = document.createElement("label");
 
 		option.type = 'checkbox';
-		option.id = prefix+option['option'];
+		option.id = prefix + check['option'];
 		option.checked = "checked"
 		
-		label.setAttribute("for", prefix+check['option'])
+		label.setAttribute("for", prefix + check['option'])
 		label.textContent = check['display'];
 
-		banner.appendChild(label);
-		banner.appendChild(option);
+		optionContainer.appendChild(label);
+		optionContainer.appendChild(option);
 	}
 
 
@@ -55,13 +95,12 @@ function gdprBanner(){
 	acceptButton.onclick = function(){
 		console.log("All Accepted");
 
-		// updateConsentState({
-		//   'ad_storage': 'granted',
-		//   'analytics_storage': 'granted',
-		//   'functionality_storage': 'granted',
-		//   'personalization_storage': 'granted',
-		//   'security_storage': 'granted'
-		// });
+		googleConsentStates = {};
+		for(choice of checkbox){
+			googleConsentStates[choice["option"]] = 'granted';
+		}
+		// updateConsentState(googleConsentStates);
+		console.log(googleConsentStates);
 	};
 	
 
@@ -72,17 +111,22 @@ function gdprBanner(){
 		console.log("Choices Confirmed");
 
 		googleConsentStates = {};
-		for(choice of ckeckbox){
-			googleConsentStates[choice["option"]] = (document.getElementById(prefix+choice['option'].checked ? 'granted' : 'denied');
+		for(choice of checkbox){
+			googleConsentStates[choice["option"]] = (document.getElementById(prefix+choice['option']).checked ? 'granted' : 'denied');
 		}
-		updateConsentState(googleConsentStates);
+		// updateConsentState(googleConsentStates);
+		console.log(googleConsentStates);
 		
 	};
 
 
 	// add select option buttons to banner
-	banner.appendChild(acceptButton);
-	banner.appendChild(confirmButton);
+	optionContainer.appendChild(confirmButton);
+	optionContainer.appendChild(acceptButton);
+
+	// add the selection section to the banner
+	banner.appendChild(textContainer);
+	banner.appendChild(optionContainer);
 
 	// put it all together
 	document.body.appendChild(banner);
