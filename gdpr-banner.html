@@ -1,4 +1,3 @@
-
 <style>
 	#GDPR-banner{
 		position: fixed;
@@ -16,6 +15,9 @@
 		justify-content: center;
 		align-items: center;
 	}
+	.GDPR-check-container{
+		padding:0 1em 0 1em;
+	}
 
 </style>
 <script>
@@ -30,28 +32,32 @@ function gdprBanner(){
 	// Parameters
 
 	// set options for what to track and what not to track see - https://developers.google.com/tag-platform/tag-manager/templates/consent-apis
-	const checkbox = [
+	var checkbox = [
 		{ option: "analytics_storage", display: "Analytics", default:'deny' },
 		{ option: "personalization_storage", display: "Personalization", default:'deny' },
 	]
+	
 
 	// Display a message to the users
-	let message = "<h1>Hello! GDPR Banner!</h1><p>Privacy Notice: we are a GDPR compliant company</p>";
-
+	var message = "";
+	message += "<div style='text-align:center;'>";
+	message += "<h1 style='margin:0; padding:0;'>Hello! GDPR Banner!</h1>";
+	message += "<p>Privacy Notice: we are a GDPR compliant company</p>";
+	message += "</div>";
 
 	// DO NOT MODIFY BELOW THIS LINE
 
-	let prefix = "GDPR-";
+	var prefix = "GDPR-";
 	
 	// console.log("hello world");
 	// const updateConsentState = require('updateConsentState');
 
 	// create banner and set styles
-	const banner = document.createElement('div');
+	var banner = document.createElement('div');
 	banner.id = prefix+'banner';
-	const textContainer = document.createElement('div');
+	var textContainer = document.createElement('div');
 	textContainer.innerHTML = message;
-	const optionContainer = document.createElement('div')
+	var optionContainer = document.createElement('div')
 	optionContainer.id = prefix + 'bannerOptions';
 
 	banner.style = `
@@ -73,30 +79,43 @@ function gdprBanner(){
 
 
 	// Create and Add tracking options
-	for(check of checkbox){
-		let option = document.createElement("input");
-		let label = document.createElement("label");
+	for(x in checkbox){
+		check = checkbox[x];
+		var group = document.createElement("div");
+		var option = document.createElement("input");
+		var label = document.createElement("label");
+
+		var innerCSS = `
+			padding: 0 1em 0 1em;
+		`
+		group.style = innerCSS;
+		// label.style = innerCSS;
+
+		group.className = prefix+'check-container'
 
 		option.type = 'checkbox';
 		option.id = prefix + check['option'];
 		option.checked = "checked"
+
 		
 		label.setAttribute("for", prefix + check['option'])
-		label.textContent = check['display'];
+		label.textContent = check['display']+" ";
 
-		optionContainer.appendChild(label);
-		optionContainer.appendChild(option);
+		group.appendChild(label);
+		group.appendChild(option);
+		optionContainer.appendChild(group);
 	}
 
 
 	// Accept all button, this will allow all tracking
-	const acceptButton = document.createElement('button');
+	var acceptButton = document.createElement('button');
 	acceptButton.textContent = 'Accept All';
 	acceptButton.onclick = function(){
 		console.log("All Accepted");
 
 		googleConsentStates = {};
-		for(choice of checkbox){
+		for(x in checkbox){
+			choice = checkbox[x];
 			googleConsentStates[choice["option"]] = 'granted';
 		}
 		// updateConsentState(googleConsentStates);
@@ -105,19 +124,22 @@ function gdprBanner(){
 	
 
 	// Confirm choices button, this will save the choices made.
-	const confirmButton = document.createElement('button');
+	var confirmButton = document.createElement('button');
 	confirmButton.textContent = 'Confirm Choice';
 	confirmButton.onclick = function(){
 		console.log("Choices Confirmed");
 
 		googleConsentStates = {};
-		for(choice of checkbox){
+		for(x in checkbox){
+			choice = checkbox[x];
 			googleConsentStates[choice["option"]] = (document.getElementById(prefix+choice['option']).checked ? 'granted' : 'denied');
 		}
 		// updateConsentState(googleConsentStates);
 		console.log(googleConsentStates);
 		
 	};
+
+	
 
 
 	// add select option buttons to banner
