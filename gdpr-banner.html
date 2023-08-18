@@ -4,8 +4,8 @@
 		bottom: 0;
 		left: 0;
 		width: 100%;
-		background-color: #f2f2f2;
-		color: #131313;
+		background-color: #068DA1;
+		color: white;
 		padding: 10px;
 		border-top: 1px solid #ccc;
 		z-index: 999;
@@ -17,6 +17,11 @@
 	}
 	.GDPR-check-container{
 		padding:0 1em 0 1em;
+	}
+	.GDPR-btn{
+		margin: 0 1em;
+		padding: 5pt;
+
 	}
 
 </style>
@@ -41,8 +46,7 @@ function gdprBanner(){
 	// Display a message to the users
 	var message = "";
 	message += "<div style='text-align:center;'>";
-	message += "<h1 style='margin:0; padding:0;'>Hello! GDPR Banner!</h1>";
-	message += "<p>Privacy Notice: we are a GDPR compliant company</p>";
+	message += "<p>We use cookies on our website to provide you with the best experience possible. If you continue browsing, you consent to the use of these cookies.<a href='https://reasons.org/privacy-policy'>Read More</a></p>";
 	message += "</div>";
 
 	// DO NOT MODIFY BELOW THIS LINE
@@ -65,8 +69,8 @@ function gdprBanner(){
 		bottom: 0;
 		left: 0;
 		width: 100%;
-		background-color: #f2f2f2;
-		color: #131313;
+		background-color: #068DA1;
+		color: white;
 		padding: 10px;
 		border-top: 1px solid #ccc;
 		z-index: 999;
@@ -109,6 +113,7 @@ function gdprBanner(){
 
 	// Accept all button, this will allow all tracking
 	var acceptButton = document.createElement('button');
+	acceptButton.className = "GDPR-btn";
 	acceptButton.textContent = 'Accept All';
 	acceptButton.onclick = function(){
 		console.log("All Accepted");
@@ -125,6 +130,7 @@ function gdprBanner(){
 
 	// Confirm choices button, this will save the choices made.
 	var confirmButton = document.createElement('button');
+	confirmButton.className = "GDPR-btn";
 	confirmButton.textContent = 'Confirm Choice';
 	confirmButton.onclick = function(){
 		console.log("Choices Confirmed");
