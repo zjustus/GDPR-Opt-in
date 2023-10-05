@@ -29,9 +29,11 @@
 function gdprBanner(){
 
 	// keep track of pages (new session) and die
-	if (sessionStorage.pageViews) ++sessionStorage.pageViews;
-	else sessionStorage.pageViews = 1;
-	if(sessionStorage.pageViews != 1) return;
+	// if (sessionStorage.pageViews) ++sessionStorage.pageViews;
+	// else sessionStorage.pageViews = 1;
+	// if(sessionStorage.pageViews != 1) return;
+
+	// const updateConsentState = require('updateConsentState');
 
 
 	// Parameters
@@ -46,24 +48,82 @@ function gdprBanner(){
 	// Display a message to the users
 	var message = "";
 	message += "<div style='text-align:center;'>";
-	message += "<p>We use cookies on our website to provide you with the best experience possible. If you continue browsing, you consent to the use of these cookies.<a href='https://reasons.org/privacy-policy'>Read More</a></p>";
+	message += "<p>We use cookies on our website to provide you with the best experience possible. If you continue browsing, you consent to the use of these cookies.<a href='https://reasons.org/privacy-policy'> Read More</a></p>";
 	message += "</div>";
 
 	// DO NOT MODIFY BELOW THIS LINE
 
 	var prefix = "GDPR-";
+
 	
-	// console.log("hello world");
-	// const updateConsentState = require('updateConsentState');
+	// Accept all button, this will allow all tracking
+	var acceptButton = document.createElement('button');
+	acceptButton.className = "GDPR-btn";
+	acceptButton.textContent = 'Accept All';
+	acceptButton.onclick = function () {
+		console.log("All Accepted");
+
+		var googleConsentStates = {};
+		for (x in checkbox) {
+			choice = checkbox[x];
+			googleConsentStates[choice["option"]] = 'granted';
+		}
+		// updateConsentState(googleConsentStates);
+		console.log(googleConsentStates);
+	};
+
+
+	// Confirm choices button, this will save the choices made.
+	var confirmButton = document.createElement('button');
+	confirmButton.className = "GDPR-btn";
+	confirmButton.textContent = 'Confirm Choice';
+	confirmButton.onclick = function () {
+		console.log("Choices Confirmed");
+
+		var googleConsentStates = {};
+		for (x in checkbox) {
+			var choice = checkbox[x];
+			googleConsentStates[choice["option"]] = (document.getElementById(prefix + choice['option']).checked ? 'granted' : 'denied');
+		}
+		// updateConsentState(googleConsentStates);
+		console.log(googleConsentStates);
+
+	};
+
+	// Deny All Button, This will deny all options
+	var closeButton = document.createElement('div');
+	closeButton.style = "text-align:right"
+	var closeLink = document.createElement('button');
+	closeLink.textContent = 'X';
+	
+	closeLink.onclick = function () {
+		console.log("Yeet");
+		var googleConsentStates = {}
+		for (x in checkbox) {
+			var choice = checkbox[x];
+			googleConsentStates[choice["option"]] = 'denied';
+		}
+		
+		// updateConsentState(googleConsentStates);
+		console.log(googleConsentStates);
+	}
+	closeButton.appendChild(closeLink);
+
 
 	// create banner and set styles
 	var banner = document.createElement('div');
 	banner.id = prefix+'banner';
 	var textContainer = document.createElement('div');
-	textContainer.innerHTML = message;
+	
+	textContainer.appendChild(closeButton);
+	textContainer.innerHTML += message;
+
+	
 	var optionContainer = document.createElement('div')
 	optionContainer.id = prefix + 'bannerOptions';
 
+
+	// These styles are to be removed when put into google tag manager
 	banner.style = `
 		position: fixed;
 		bottom: 0;
@@ -110,42 +170,6 @@ function gdprBanner(){
 		optionContainer.appendChild(group);
 	}
 
-
-	// Accept all button, this will allow all tracking
-	var acceptButton = document.createElement('button');
-	acceptButton.className = "GDPR-btn";
-	acceptButton.textContent = 'Accept All';
-	acceptButton.onclick = function(){
-		console.log("All Accepted");
-
-		googleConsentStates = {};
-		for(x in checkbox){
-			choice = checkbox[x];
-			googleConsentStates[choice["option"]] = 'granted';
-		}
-		// updateConsentState(googleConsentStates);
-		console.log(googleConsentStates);
-	};
-	
-
-	// Confirm choices button, this will save the choices made.
-	var confirmButton = document.createElement('button');
-	confirmButton.className = "GDPR-btn";
-	confirmButton.textContent = 'Confirm Choice';
-	confirmButton.onclick = function(){
-		console.log("Choices Confirmed");
-
-		googleConsentStates = {};
-		for(x in checkbox){
-			choice = checkbox[x];
-			googleConsentStates[choice["option"]] = (document.getElementById(prefix+choice['option']).checked ? 'granted' : 'denied');
-		}
-		// updateConsentState(googleConsentStates);
-		console.log(googleConsentStates);
-		
-	};
-
-	
 
 
 	// add select option buttons to banner
