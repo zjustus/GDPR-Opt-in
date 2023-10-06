@@ -5,20 +5,30 @@ A Google Tag Manager Script designed to put a GDPR-compliant banner on any websi
 Google tag manager cannot use session start as a trigger; This script gets around it but is not a perfect solution.
 
 
+# How to Install
+**Step 1.**
+Create a new folder to contain the following things
 
-Create a new User Defined Variable
-Type: Data Layer Variable
-Name: consentStates
+**Step 2.**
+Create a new Custom HTML Tag
+Copy the text from gdpr-banner_tag.html
+that fires on every page view
 
+**Step 3.**
+Create a new Tag Template
+Copy the text from gdpr-processor_template.js
 
-Todo:
-On page load, form is displayed
-on form sumbut the dataLayer is updated {consentStates}
-- 
-create a trigger that fires when the form is submitted
-trigger will fire a tag
-the tag is based on a template
-the template will read the dataLayer {consentStates} and update the google consent states via the API
+**Step 4.**
+Set Tag Template Permissions
+Access Consent State - All Content types, Read and Write
+Global Variables - {consentUpdate: [Execute]}
+
+**Step 5.**
+Create a new Tag based on the previously created template
+fire after first tag is executed
+
+**Step 6.**
+Test the full enviorment
 
 TODO:
 - 

@@ -26,17 +26,31 @@
 
 </style>
 <script>
+
+// Create Queue of callBacks also a way to trigger the other script
+var consentListeners = [];
+window.consentUpdate = function (callback) {
+	console.log("Function Added to Cue")
+	consentListeners.push(callback);
+}
+// execute the queue
+function onConsentChange(consent) {
+	console.log(consent);
+	for (x in consentListeners) {
+		console.log("Consent Changing...")
+		var callback = consentListeners[x];
+		callback(consent);
+	}
+};
+
+
 function gdprBanner(){
 
 
 	// keep track of pages (new session) and die
-	console.log("Fired")
 	if (sessionStorage.pageViews) ++sessionStorage.pageViews;
 	else sessionStorage.pageViews = 1;
 	if(sessionStorage.pageViews != 1) return;
-
-	console.log("running")
-
 
 
 	// Parameters
@@ -99,6 +113,8 @@ function gdprBanner(){
 	function closeBanner(){
 		banner.remove();
 	}
+	window.consentUpdate(closeBanner);
+
 
 	// Accept all button, this will allow all tracking
 	var acceptButton = document.createElement('button');
@@ -113,10 +129,7 @@ function gdprBanner(){
 			googleConsentStates[choice["option"]] = 'granted';
 		}
 
-		dataLayer.push({'consentStates': googleConsentStates })
-		console.log(googleConsentStates);
-
-		closeBanner();
+		onConsentChange(googleConsentStates);
 	};
 
 
@@ -132,10 +145,7 @@ function gdprBanner(){
 			var choice = checkbox[x];
 			googleConsentStates[choice["option"]] = (document.getElementById(prefix + choice['option']).checked ? 'granted' : 'denied');
 		}
-		dataLayer.push({ 'consentStates': googleConsentStates })
-		console.log(googleConsentStates);
-		
-		closeBanner();
+		onConsentChange(googleConsentStates)		
 	};
 
 	// Deny All Button, This will deny all options
@@ -153,10 +163,7 @@ function gdprBanner(){
 				googleConsentStates[choice["option"]] = 'denied';
 			}
 
-			dataLayer.push({ 'consentStates': googleConsentStates })
-			console.log(googleConsentStates);
-
-			closeBanner();
+			onConsentChange(googleConsentStates)
 		}
 		return closeLink
 	}());
@@ -208,4 +215,6 @@ function gdprBanner(){
 }
 	
 gdprBanner();
+
+
 </script>
