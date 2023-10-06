@@ -11,6 +11,11 @@ TODO:
 - send data to meta pixel
 - send data to VWO
 
+Notes:
+Refference - https://developers.google.com/tag-platform/tag-manager/templates/consent-apis
+API Docs - https://developers.google.com/tag-platform/tag-manager/templates/api
+
+
 
 # How to Install
 **Step 1.**
