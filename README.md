@@ -5,6 +5,13 @@ A Google Tag Manager Script designed to put a GDPR-compliant banner on any websi
 Google tag manager cannot use session start as a trigger; This script gets around it but is not a perfect solution.
 
 
+TODO:
+- Change popup to appear if consent cookie / session storage does not exist
+- If consent cookie exists set the cookies for the page
+- send data to meta pixel
+- send data to VWO
+
+
 # How to Install
 **Step 1.**
 Create a new folder to contain the following things
@@ -29,9 +36,3 @@ fire after first tag is executed
 
 **Step 6.**
 Test the full enviorment
-
-TODO:
-- 
-- send data to google tag manager
-- send data to meta pixel
-- send data to VWO
