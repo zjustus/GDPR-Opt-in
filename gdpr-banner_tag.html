@@ -1,5 +1,5 @@
 <style>
-	#GDPR-banner{
+	#Consent-banner{
 		position: fixed;
 		bottom: 0;
 		left: 0;
@@ -10,18 +10,20 @@
 		border-top: 1px solid #ccc;
 		z-index: 999;
 	}
-	#GDPR-optionContainer{
+	#Consent-bannerOptions{
 		display: flex;
+		flex-wrap: wrap;
 		justify-content: center;
 		align-items: center;
 	}
-	.GDPR-check-container{
+	.Consent-check-container{
 		padding:0 1em 0 1em;
 	}
-	.GDPR-btn{
-		margin: 0 1em;
+	.Consent-btn{
+		margin: 1pt 1em;
 		padding: 5pt;
-
+		border-style: none;
+		border-radius: 10px;
 	}
 
 </style>
@@ -30,28 +32,36 @@
 // Create Queue of callBacks also a way to trigger the other script
 var consentListeners = [];
 window.consentUpdate = function (callback) {
-	console.log("Function Added to Cue")
 	consentListeners.push(callback);
 }
 // execute the queue
 function onConsentChange(consent) {
-	console.log(consent);
 	for (x in consentListeners) {
-		console.log("Consent Changing...")
 		var callback = consentListeners[x];
 		callback(consent);
 	}
 };
 
+// gets a Cookie and trys to get the JSON
+function parseCookie(cookieName){
+	try{
+		return JSON.parse(
+		document.cookie
+		.split('; ')
+			.find(
+				function(row){ return row.startsWith(cookieName+'=')}
+			)
+			.split("=")[1]
+		);
+	}
+	catch(e){
+		return null
+	}
+}
 
-function gdprBanner(){
 
-
-	// keep track of pages (new session) and die
-	if (sessionStorage.pageViews) ++sessionStorage.pageViews;
-	else sessionStorage.pageViews = 1;
-	if(sessionStorage.pageViews != 1) return;
-
+// the main function
+window.showConsentBanner = function () {
 
 	// Parameters
 
@@ -74,7 +84,22 @@ function gdprBanner(){
 	 *
 	**/ 
 
-	var prefix = "GDPR-";
+	var prefix = "Consent-";
+
+	// keep track of pages (new session) and die if needed
+	var existingTracking = parseCookie("trackingPreference");
+	if (existingTracking) {
+		onConsentChange(existingTracking);
+		return;
+	}
+
+	// sets the Consent cookie for future page loads
+	function set_GDPR_cookie(trackingOptions) {
+		document.cookie = 'trackingPreference=' + JSON.stringify(trackingOptions) + '; samesite=lax';
+	}
+	window.consentUpdate(set_GDPR_cookie);
+
+
 
 	/**
 	 * create banner and set styles
@@ -109,7 +134,7 @@ function gdprBanner(){
 	 * This section is responsible for The buttons
 	**/
 
-	// This will close the GDPR Banner
+	// This will close the Consent Banner
 	function closeBanner(){
 		banner.remove();
 	}
@@ -118,10 +143,9 @@ function gdprBanner(){
 
 	// Accept all button, this will allow all tracking
 	var acceptButton = document.createElement('button');
-	acceptButton.className = "GDPR-btn";
+	acceptButton.className = "Consent-btn";
 	acceptButton.textContent = 'Accept All';
 	acceptButton.onclick = function () {
-		console.log("All Accepted");
 
 		var googleConsentStates = {};
 		for (x in checkbox) {
@@ -135,10 +159,9 @@ function gdprBanner(){
 
 	// Confirm choices button, this will save the choices made.
 	var confirmButton = document.createElement('button');
-	confirmButton.className = "GDPR-btn";
+	confirmButton.className = "Consent-btn";
 	confirmButton.textContent = 'Confirm Choice';
 	confirmButton.onclick = function () {
-		console.log("Choices Confirmed");
 
 		var googleConsentStates = {};
 		for (x in checkbox) {
@@ -155,7 +178,6 @@ function gdprBanner(){
 		var closeLink = document.createElement('a');
 		closeLink.textContent = 'X';
 		closeLink.onclick = function (e) {
-			console.log("Yeet");
 			e.preventDefault();
 			var googleConsentStates = {}
 			for (x in checkbox) {
@@ -213,8 +235,5 @@ function gdprBanner(){
 	banner.appendChild(optionContainer);
 	document.body.appendChild(banner);
 }
-	
-gdprBanner();
-
 
 </script>
